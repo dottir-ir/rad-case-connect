@@ -1,5 +1,5 @@
 
-import { Home, Upload, User, LogIn, SidebarTrigger } from 'lucide-react';
+import { Home, Upload, User, LogIn } from 'lucide-react';
 import {
   Sidebar,
   SidebarContent,
@@ -10,6 +10,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarHeader,
+  SidebarTrigger,
 } from '@/components/ui/sidebar';
 
 interface AppSidebarProps {
