@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -8,9 +7,13 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Textarea } from '@/components/ui/textarea';
 import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
-import { AlertCircle, CheckCircle, Upload } from 'lucide-react';
+import { AlertCircle, CheckCircle, Upload, Play } from 'lucide-react';
 
-const AuthFlow = () => {
+interface AuthFlowProps {
+  onDemoLogin?: (role: 'doctor' | 'student') => void;
+}
+
+const AuthFlow = ({ onDemoLogin }: AuthFlowProps) => {
   const [currentStep, setCurrentStep] = useState<'signin' | 'signup' | 'doctor-verification'>('signin');
   const [userRole, setUserRole] = useState<'doctor' | 'student' | ''>('');
   const [formData, setFormData] = useState({
@@ -47,6 +50,24 @@ const AuthFlow = () => {
           </CardHeader>
           
           <CardContent className="space-y-6">
+            {/* Demo Access Section */}
+            <div className="bg-medical-blue/10 border border-medical-blue/20 rounded-lg p-4">
+              <div className="flex items-center gap-2 mb-2">
+                <Play className="h-5 w-5 text-medical-blue" />
+                <span className="font-semibold text-medical-blue">Try Demo Mode</span>
+              </div>
+              <p className="text-sm text-medical-gray-dark mb-3">
+                Want to explore the platform right away? Use our demo doctor account.
+              </p>
+              <Button 
+                onClick={() => onDemoLogin?.('doctor')}
+                className="w-full bg-medical-blue hover:bg-medical-blue-dark"
+              >
+                <Play className="h-4 w-4 mr-2" />
+                Enter as Demo Doctor
+              </Button>
+            </div>
+
             <div className="bg-medical-warning/10 border border-medical-warning/20 rounded-lg p-4">
               <div className="flex items-center gap-2 mb-2">
                 <AlertCircle className="h-5 w-5 text-medical-warning" />
@@ -143,6 +164,36 @@ const AuthFlow = () => {
         </CardHeader>
         
         <CardContent className="space-y-4">
+          {/* Demo Accounts Section */}
+          <div className="bg-gradient-to-r from-medical-blue/10 to-medical-blue-light/10 border border-medical-blue/20 rounded-lg p-4">
+            <div className="flex items-center gap-2 mb-3">
+              <Play className="h-5 w-5 text-medical-blue" />
+              <span className="font-semibold text-medical-blue">Try Demo Accounts</span>
+            </div>
+            <div className="space-y-2">
+              <Button 
+                onClick={() => onDemoLogin?.('doctor')}
+                className="w-full bg-medical-blue hover:bg-medical-blue-dark"
+                size="sm"
+              >
+                Demo Doctor Account
+              </Button>
+              <Button 
+                onClick={() => onDemoLogin?.('student')}
+                variant="outline" 
+                className="w-full border-medical-blue text-medical-blue hover:bg-medical-blue/10"
+                size="sm"
+              >
+                Demo Student Account
+              </Button>
+            </div>
+            <p className="text-xs text-medical-gray-dark mt-2">
+              Explore all features without creating an account
+            </p>
+          </div>
+
+          <Separator className="my-4" />
+
           {currentStep === 'signup' && (
             <>
               <div>

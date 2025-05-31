@@ -1,221 +1,178 @@
 
-import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { User, MapPin, Calendar, Save, Upload, Edit } from 'lucide-react';
+import { User, BookmarkIcon, FileText, Edit } from 'lucide-react';
 
-const UserProfile = () => {
-  const [userRole] = useState<'doctor' | 'student'>('doctor');
-  const [isOwnProfile] = useState(true);
+interface UserProfileProps {
+  userRole?: 'doctor' | 'student' | null;
+  userName?: string;
+}
 
-  const mockUser = {
-    name: 'Dr. Sarah Chen',
-    title: 'Interventional Radiologist',
-    bio: 'Passionate about medical education and advancing radiology knowledge. Specializing in interventional procedures and complex diagnostic imaging.',
-    location: 'San Francisco, CA',
-    joinDate: 'January 2023',
-    casesPosted: 15,
-    casesSaved: 42,
-    avatar: '',
-  };
-
+const UserProfile = ({ userRole = null, userName = '' }: UserProfileProps) => {
+  // Mock data for demo
   const mockSavedCases = [
     {
-      id: '1',
-      title: 'Complex Aortic Dissection Case',
-      author: 'Dr. Michael Rodriguez',
-      tags: ['Cardiovascular', 'Emergency'],
-      createdAt: '2 days ago',
+      id: 1,
+      title: "Acute MI with ST Elevation",
+      patientAge: 45,
+      patientGender: "Male",
+      tags: ["Cardiology", "Emergency", "ECG"]
     },
     {
-      id: '2',
-      title: 'Pediatric Mediastinal Mass',
-      author: 'Dr. Emily Johnson',
-      tags: ['Pediatric', 'Chest'],
-      createdAt: '1 week ago',
-    },
-    {
-      id: '3',
-      title: 'Rare Spinal Tumor Presentation',
-      author: 'Dr. James Wilson',
-      tags: ['Spine', 'Oncology'],
-      createdAt: '2 weeks ago',
-    },
+      id: 2,
+      title: "Pneumothorax in Young Adult",
+      patientAge: 22,
+      patientGender: "Female", 
+      tags: ["Chest X-ray", "Emergency", "Respiratory"]
+    }
   ];
 
   const mockPostedCases = [
     {
-      id: '1',
-      title: 'Type B Aortic Dissection Teaching Case',
-      tags: ['Cardiovascular', 'CT Angiography'],
+      id: 3,
+      title: "Complex Spinal Fracture",
+      patientAge: 35,
+      patientGender: "Male",
+      tags: ["Spine", "Trauma", "CT"],
       likes: 24,
-      comments: 8,
-      createdAt: '3 days ago',
+      comments: 12
     },
     {
-      id: '2',
-      title: 'Interventional Radiology: TIPS Procedure',
-      tags: ['Interventional', 'Liver'],
+      id: 4,
+      title: "Pediatric Brain Tumor",
+      patientAge: 8,
+      patientGender: "Female",
+      tags: ["Pediatric", "Neurology", "MRI"],
       likes: 18,
-      comments: 12,
-      createdAt: '1 week ago',
-    },
+      comments: 8
+    }
   ];
 
+  const userBio = userRole === 'doctor' 
+    ? "Radiologist with 12 years of experience specializing in emergency and trauma imaging. Passionate about medical education and case-based learning."
+    : "4th year medical student with keen interest in radiology and diagnostic imaging. Excited to learn from experienced practitioners.";
+
+  const userTitle = userRole === 'doctor' 
+    ? "Radiologist at Johns Hopkins Hospital"
+    : "Medical Student at Harvard Medical School";
+
   return (
-    <div className="max-w-4xl mx-auto px-4 py-6">
-      {/* Profile Header */}
-      <Card className="mb-6">
-        <CardContent className="pt-6">
-          <div className="flex flex-col md:flex-row items-start md:items-center gap-6">
-            <Avatar className="h-24 w-24">
-              <AvatarImage src={mockUser.avatar} />
-              <AvatarFallback className="text-2xl">
-                <User className="h-12 w-12" />
-              </AvatarFallback>
-            </Avatar>
-
-            <div className="flex-1">
-              <div className="flex items-center gap-3 mb-2">
-                <h1 className="text-2xl font-bold text-medical-blue">{mockUser.name}</h1>
-                <Badge variant="outline" className="bg-medical-blue/10 text-medical-blue">
-                  {userRole === 'doctor' ? 'Verified Doctor' : 'Medical Student'}
-                </Badge>
-              </div>
+    <div className="min-h-screen bg-medical-gray-light">
+      <div className="container mx-auto px-4 py-8">
+        {/* Profile Header */}
+        <Card className="mb-8">
+          <CardContent className="pt-6">
+            <div className="flex flex-col md:flex-row items-start gap-6">
+              <Avatar className="h-24 w-24">
+                <AvatarImage src="/placeholder.jpg" />
+                <AvatarFallback className="text-2xl">
+                  <User className="h-12 w-12" />
+                </AvatarFallback>
+              </Avatar>
               
-              <p className="text-lg text-medical-gray mb-2">{mockUser.title}</p>
-              <p className="text-medical-gray-dark mb-4">{mockUser.bio}</p>
-              
-              <div className="flex items-center gap-4 text-sm text-medical-gray">
-                <div className="flex items-center gap-1">
-                  <MapPin className="h-4 w-4" />
-                  {mockUser.location}
-                </div>
-                <div className="flex items-center gap-1">
-                  <Calendar className="h-4 w-4" />
-                  Joined {mockUser.joinDate}
-                </div>
-              </div>
-            </div>
-
-            {isOwnProfile && (
-              <Button variant="outline" className="flex items-center gap-2">
-                <Edit className="h-4 w-4" />
-                Edit Profile
-              </Button>
-            )}
-          </div>
-
-          {/* Stats */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6 pt-6 border-t">
-            <div className="text-center">
-              <p className="text-2xl font-bold text-medical-blue">{mockUser.casesSaved}</p>
-              <p className="text-sm text-medical-gray">Cases Saved</p>
-            </div>
-            {userRole === 'doctor' && (
-              <div className="text-center">
-                <p className="text-2xl font-bold text-medical-blue">{mockUser.casesPosted}</p>
-                <p className="text-sm text-medical-gray">Cases Posted</p>
-              </div>
-            )}
-            <div className="text-center">
-              <p className="text-2xl font-bold text-medical-blue">156</p>
-              <p className="text-sm text-medical-gray">Total Likes</p>
-            </div>
-            <div className="text-center">
-              <p className="text-2xl font-bold text-medical-blue">89</p>
-              <p className="text-sm text-medical-gray">Comments</p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Tabs */}
-      <Tabs defaultValue="saved" className="w-full">
-        <TabsList className="grid w-full grid-cols-2">
-          <TabsTrigger value="saved" className="flex items-center gap-2">
-            <Save className="h-4 w-4" />
-            Saved Cases
-          </TabsTrigger>
-          {userRole === 'doctor' && (
-            <TabsTrigger value="posted" className="flex items-center gap-2">
-              <Upload className="h-4 w-4" />
-              Posted Cases
-            </TabsTrigger>
-          )}
-        </TabsList>
-
-        {/* Saved Cases */}
-        <TabsContent value="saved" className="mt-6">
-          <div className="space-y-4">
-            {mockSavedCases.map((case_) => (
-              <Card key={case_.id} className="hover:shadow-md transition-shadow">
-                <CardContent className="pt-4">
-                  <div className="flex justify-between items-start">
-                    <div className="flex-1">
-                      <h3 className="font-semibold text-medical-blue mb-1">{case_.title}</h3>
-                      <p className="text-sm text-medical-gray mb-2">by {case_.author}</p>
-                      <div className="flex gap-2 mb-2">
-                        {case_.tags.map((tag, index) => (
-                          <Badge key={index} variant="secondary" className="text-xs">
-                            {tag}
-                          </Badge>
-                        ))}
-                      </div>
-                      <p className="text-xs text-medical-gray">{case_.createdAt}</p>
-                    </div>
-                    <Button variant="ghost" size="sm" className="text-medical-blue">
-                      View Case
-                    </Button>
+              <div className="flex-1">
+                <div className="flex items-start justify-between mb-4">
+                  <div>
+                    <h1 className="text-2xl font-bold text-medical-blue">{userName}</h1>
+                    <p className="text-medical-gray">{userTitle}</p>
+                    <Badge 
+                      variant="outline" 
+                      className={userRole === 'doctor' ? 'bg-medical-blue/10 text-medical-blue' : 'bg-medical-success/10 text-medical-success'}
+                    >
+                      {userRole === 'doctor' ? 'Verified Doctor' : 'Medical Student'}
+                    </Badge>
                   </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </TabsContent>
+                  <Button variant="outline" className="flex items-center gap-2">
+                    <Edit className="h-4 w-4" />
+                    Edit Profile
+                  </Button>
+                </div>
+                
+                <p className="text-medical-gray-dark leading-relaxed">
+                  {userBio}
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
 
-        {/* Posted Cases (Doctor only) */}
-        {userRole === 'doctor' && (
-          <TabsContent value="posted" className="mt-6">
-            <div className="space-y-4">
-              {mockPostedCases.map((case_) => (
+        {/* Profile Content Tabs */}
+        <Tabs defaultValue="saved" className="w-full">
+          <TabsList className="grid w-full grid-cols-2">
+            <TabsTrigger value="saved" className="flex items-center gap-2">
+              <BookmarkIcon className="h-4 w-4" />
+              Saved Cases
+            </TabsTrigger>
+            {userRole === 'doctor' && (
+              <TabsTrigger value="posted" className="flex items-center gap-2">
+                <FileText className="h-4 w-4" />
+                Posted Cases
+              </TabsTrigger>
+            )}
+          </TabsList>
+
+          <TabsContent value="saved" className="mt-6">
+            <div className="grid gap-4">
+              {mockSavedCases.map((case_) => (
                 <Card key={case_.id} className="hover:shadow-md transition-shadow">
-                  <CardContent className="pt-4">
-                    <div className="flex justify-between items-start">
-                      <div className="flex-1">
-                        <h3 className="font-semibold text-medical-blue mb-1">{case_.title}</h3>
-                        <div className="flex gap-2 mb-2">
-                          {case_.tags.map((tag, index) => (
-                            <Badge key={index} variant="secondary" className="text-xs">
-                              {tag}
-                            </Badge>
-                          ))}
-                        </div>
-                        <div className="flex items-center gap-4 text-xs text-medical-gray">
-                          <span>{case_.likes} likes</span>
-                          <span>{case_.comments} comments</span>
-                          <span>{case_.createdAt}</span>
-                        </div>
-                      </div>
-                      <div className="flex gap-2">
-                        <Button variant="ghost" size="sm" className="text-medical-gray">
-                          Edit
-                        </Button>
-                        <Button variant="ghost" size="sm" className="text-medical-blue">
-                          View
-                        </Button>
-                      </div>
+                  <CardContent className="p-4">
+                    <div className="flex justify-between items-start mb-2">
+                      <h3 className="font-semibold text-medical-blue">{case_.title}</h3>
+                      <BookmarkIcon className="h-5 w-5 text-medical-blue fill-current" />
+                    </div>
+                    <p className="text-sm text-medical-gray mb-3">
+                      {case_.patientAge} year old {case_.patientGender.toLowerCase()}
+                    </p>
+                    <div className="flex flex-wrap gap-2">
+                      {case_.tags.map((tag) => (
+                        <Badge key={tag} variant="secondary" className="text-xs">
+                          {tag}
+                        </Badge>
+                      ))}
                     </div>
                   </CardContent>
                 </Card>
               ))}
             </div>
           </TabsContent>
-        )}
-      </Tabs>
+
+          {userRole === 'doctor' && (
+            <TabsContent value="posted" className="mt-6">
+              <div className="grid gap-4">
+                {mockPostedCases.map((case_) => (
+                  <Card key={case_.id} className="hover:shadow-md transition-shadow">
+                    <CardContent className="p-4">
+                      <div className="flex justify-between items-start mb-2">
+                        <h3 className="font-semibold text-medical-blue">{case_.title}</h3>
+                        <Button variant="ghost" size="sm">
+                          <Edit className="h-4 w-4" />
+                        </Button>
+                      </div>
+                      <p className="text-sm text-medical-gray mb-3">
+                        {case_.patientAge} year old {case_.patientGender.toLowerCase()}
+                      </p>
+                      <div className="flex flex-wrap gap-2 mb-3">
+                        {case_.tags.map((tag) => (
+                          <Badge key={tag} variant="secondary" className="text-xs">
+                            {tag}
+                          </Badge>
+                        ))}
+                      </div>
+                      <div className="flex items-center gap-4 text-sm text-medical-gray">
+                        <span>{case_.likes} likes</span>
+                        <span>{case_.comments} comments</span>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </TabsContent>
+          )}
+        </Tabs>
+      </div>
     </div>
   );
 };

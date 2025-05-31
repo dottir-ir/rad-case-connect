@@ -9,19 +9,40 @@ import AuthFlow from '@/components/AuthFlow';
 const Index = () => {
   const [currentView, setCurrentView] = useState<'feed' | 'upload' | 'profile' | 'auth'>('feed');
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [userRole, setUserRole] = useState<'doctor' | 'student' | null>(null);
+  const [userName, setUserName] = useState<string>('');
 
-  // Demo purposes - in real app, this would come from authentication state
   const handleViewChange = (view: 'feed' | 'upload' | 'profile' | 'auth') => {
     setCurrentView(view);
   };
 
+  const handleDemoLogin = (role: 'doctor' | 'student') => {
+    setIsAuthenticated(true);
+    setUserRole(role);
+    setUserName(role === 'doctor' ? 'Dr. Sarah Johnson' : 'Alex Chen');
+    setCurrentView('feed');
+    console.log(`Logged in as demo ${role}`);
+  };
+
+  const handleLogout = () => {
+    setIsAuthenticated(false);
+    setUserRole(null);
+    setUserName('');
+    setCurrentView('auth');
+  };
+
   if (!isAuthenticated && currentView !== 'auth') {
-    return <AuthFlow />;
+    return <AuthFlow onDemoLogin={handleDemoLogin} />;
   }
 
   return (
     <div className="min-h-screen bg-white">
-      <Header />
+      <Header 
+        isAuthenticated={isAuthenticated}
+        userRole={userRole}
+        userName={userName}
+        onLogout={handleLogout}
+      />
       
       {/* Demo Navigation */}
       <div className="border-b bg-gray-50">
@@ -35,14 +56,16 @@ const Index = () => {
             >
               Case Feed
             </button>
-            <button
-              onClick={() => handleViewChange('upload')}
-              className={`text-sm font-medium ${
-                currentView === 'upload' ? 'text-medical-blue border-b-2 border-medical-blue' : 'text-gray-600'
-              } pb-3`}
-            >
-              Upload Case
-            </button>
+            {userRole === 'doctor' && (
+              <button
+                onClick={() => handleViewChange('upload')}
+                className={`text-sm font-medium ${
+                  currentView === 'upload' ? 'text-medical-blue border-b-2 border-medical-blue' : 'text-gray-600'
+                } pb-3`}
+              >
+                Upload Case
+              </button>
+            )}
             <button
               onClick={() => handleViewChange('profile')}
               className={`text-sm font-medium ${
@@ -65,9 +88,9 @@ const Index = () => {
 
       <main>
         {currentView === 'feed' && <CaseFeed />}
-        {currentView === 'upload' && <CaseUploadForm />}
-        {currentView === 'profile' && <UserProfile />}
-        {currentView === 'auth' && <AuthFlow />}
+        {currentView === 'upload' && userRole === 'doctor' && <CaseUploadForm />}
+        {currentView === 'profile' && <UserProfile userRole={userRole} userName={userName} />}
+        {currentView === 'auth' && <AuthFlow onDemoLogin={handleDemoLogin} />}
       </main>
     </div>
   );

@@ -2,12 +2,16 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { User, Plus, Search } from 'lucide-react';
+import { User, Plus, Search, LogOut } from 'lucide-react';
 
-const Header = () => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [userRole, setUserRole] = useState<'doctor' | 'student' | null>(null);
+interface HeaderProps {
+  isAuthenticated?: boolean;
+  userRole?: 'doctor' | 'student' | null;
+  userName?: string;
+  onLogout?: () => void;
+}
 
+const Header = ({ isAuthenticated = false, userRole = null, userName = '', onLogout }: HeaderProps) => {
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/60">
       <div className="container mx-auto px-4 h-16 flex items-center justify-between">
@@ -32,12 +36,25 @@ const Header = () => {
                   Upload Case
                 </Button>
               )}
-              <Avatar className="h-8 w-8">
-                <AvatarImage src="/placeholder.jpg" />
-                <AvatarFallback>
-                  <User className="h-4 w-4" />
-                </AvatarFallback>
-              </Avatar>
+              <div className="flex items-center space-x-2">
+                <Avatar className="h-8 w-8">
+                  <AvatarImage src="/placeholder.jpg" />
+                  <AvatarFallback>
+                    <User className="h-4 w-4" />
+                  </AvatarFallback>
+                </Avatar>
+                <span className="text-sm font-medium text-gray-700 hidden sm:block">
+                  {userName}
+                </span>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={onLogout}
+                  className="text-gray-600 hover:text-gray-800"
+                >
+                  <LogOut className="h-4 w-4" />
+                </Button>
+              </div>
             </>
           ) : (
             <div className="flex items-center space-x-2">
